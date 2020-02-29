@@ -38,7 +38,6 @@ func download(url string, c chan string) {
 	stdout, _ := cmd.StdoutPipe()
 	cmd.Start()
 
-	c <- "added " + url
 	content := make([]byte, 5000)
 	for {
 		_, err := stdout.Read(content)
@@ -84,9 +83,20 @@ func combineLogs(c chan string) {
 	}
 }
 
+func bufferUrls(url string, c chan string, guard chan struct{}) {
+	c <- "added " + url
+	guard <- struct{}{}
+	download(url, c)
+	<-guard
+}
+
 func main() {
-	var prevClip = ""
+	maxParallel := 5
+	prevClip := ""
+
 	c := make(chan string)
+	guard := make(chan struct{}, maxParallel)
+
 	go combineLogs(c)
 	for {
 		var clip, err = clipboard.ReadAll()
@@ -96,7 +106,7 @@ func main() {
 		}
 		if prevClip != clip && strings.HasPrefix(clip, "https://") {
 			prevClip = clip
-			go download(clip, c)
+			go bufferUrls(clip, c, guard)
 		}
 		time.Sleep(333 * time.Millisecond)
 	}
