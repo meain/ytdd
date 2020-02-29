@@ -17,6 +17,14 @@ func formatPercentage(info string, url string) string {
 	if err != nil {
 		log.Fatal(err)
 	}
+	re2, err := regexp.Compile(`\[download\] Destination: ([a-zA-Z0-9-_\.\ ]+)`)
+	if err != nil {
+		log.Fatal(err)
+	}
+	maybeName := re2.FindStringSubmatch(info)
+	if len(maybeName) > 1 {
+		return url + " " + maybeName[1]
+	}
 	result := re1.FindStringSubmatch(info)
 	if len(result) > 1 {
 		return result[1] + "% " + url
@@ -26,10 +34,11 @@ func formatPercentage(info string, url string) string {
 
 func download(url string, c chan string) {
 	cmd := exec.Command("youtube-dl", "--no-playlist", url)
+	// cmd := exec.Command("./eclogs")
 	stdout, _ := cmd.StdoutPipe()
 	cmd.Start()
 
-	content := make([]byte, 50)
+	content := make([]byte, 5000)
 	for {
 		_, err := stdout.Read(content)
 		if err != nil {
@@ -44,32 +53,28 @@ func download(url string, c chan string) {
 
 func combineLogs(c chan string) {
 	perc := orderedmap.New()
-	// perc := make(map[string]string)
+	names := make(map[string]string)
 	for {
 		info := <-c
 		splits := strings.Split(info, " ")
+		if strings.HasPrefix(splits[0], "https://") {
+			names[splits[0]] = strings.Join(splits[1:], " ")
+			continue
+		}
 		if splits[0] != "..." {
 			perc.Set(splits[1], splits[0])
-			// perc[splits[1]] = splits[0]
-			// perc[splits[1]] = "done"
-			// delete(perc, splits[1])
 		}
 		var count = 0
 		for _, k := range perc.Keys() {
 			v, _ := perc.Get(k)
-			// s := strings.Split(k, "=")
-			// fmt.Printf("= %v: %v      \n", s[1], v)
-			fmt.Printf("= %v: %v      \n", k, v)
+			fmt.Printf("= %v: %v      \n", names[k], v)
 			count += 1
 		}
 		CURSOR_UP_ONE := "\x1b[1A"
-		// ERASE_LINE := "\x1b[2K"
 		fmt.Printf(strings.Repeat(CURSOR_UP_ONE, count))
 	}
 }
 
-// https://www.youtube.com/watch?v=OxA0XQ06rrw
-// https://www.youtube.com/watch?v=2WXNY1ppTzY
 func main() {
 	var prevClip = ""
 	c := make(chan string)
@@ -82,7 +87,6 @@ func main() {
 		}
 		if prevClip != clip && strings.HasPrefix(clip, "https://") {
 			prevClip = clip
-			// fmt.Println(clip)
 			go download(clip, c)
 		}
 		time.Sleep(1 * time.Second)
