@@ -1,0 +1,14 @@
+#!/bin/sh
+
+set -e
+
+goreleaser -v || (echo "goreleaser not fount" && exit 1)
+
+if [ -z "$1" ]; then
+  VERSION=$(git describe --abbrev=0 --tags | awk -F. '{$NF = $NF + 1;} 1' | sed 's/ /./g')
+else
+  VERSION="$1"
+fi
+
+git tag "$VERSION"
+goreleaser --rm-dist

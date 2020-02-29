@@ -1,0 +1,17 @@
+#!/bin/sh
+
+set -e
+
+
+#!/bin/bash
+
+set -e
+
+platform=$(uname | tr '[:upper:]' '[:lower:]')
+curl --silent https://api.github.com/repos/meain/ytdd/releases/latest |
+    grep -o "https://github.com/meain/ytdd/releases/download/.*$platform\_amd64.*.tar.gz" |
+    head -n1 | xargs curl -fL# | tar -zxvf - ytdd > ytdd
+installdir="/usr/local/bin"
+mkdir -p $installdir
+mv ./ytdd "$installdir"
+echo "Installation complete!"
