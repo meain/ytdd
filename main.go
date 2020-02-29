@@ -53,7 +53,7 @@ func download(url string, c chan string) {
 }
 
 func combineLogs(c chan string) {
-    ERASE_LINE := "\x1b[2K"
+	ERASE_LINE := "\x1b[2K"
 	CURSOR_UP_ONE := "\x1b[1A"
 	perc := orderedmap.New()
 	names := make(map[string]string)
@@ -97,6 +97,6 @@ func main() {
 			prevClip = clip
 			go download(clip, c)
 		}
-		time.Sleep(1 * time.Second)
+		time.Sleep(333 * time.Millisecond)
 	}
 }
