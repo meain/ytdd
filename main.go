@@ -53,6 +53,8 @@ func download(url string, c chan string) {
 }
 
 func combineLogs(c chan string) {
+    ERASE_LINE := "\x1b[2K"
+	CURSOR_UP_ONE := "\x1b[1A"
 	perc := orderedmap.New()
 	names := make(map[string]string)
 	for {
@@ -69,15 +71,14 @@ func combineLogs(c chan string) {
 		for _, k := range perc.Keys() {
 			v, _ := perc.Get(k)
 
-            name, ok := names[k]
+			name, ok := names[k]
 			if ok {
-				fmt.Printf("= %v: %v      \n", name, v)
+				fmt.Printf("%v= %v: %v\n", ERASE_LINE, name, v)
 			} else {
-				fmt.Printf("= %v: %v      \n", k, v)
+				fmt.Printf("%v= %v: %v\n", ERASE_LINE, k, v)
 			}
 			count += 1
 		}
-		CURSOR_UP_ONE := "\x1b[1A"
 		fmt.Printf(strings.Repeat(CURSOR_UP_ONE, count))
 	}
 }
