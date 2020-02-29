@@ -34,10 +34,11 @@ func formatPercentage(info string, url string) string {
 
 func download(url string, c chan string) {
 	cmd := exec.Command("youtube-dl", "--no-playlist", url)
-	// cmd := exec.Command("./eclogs")
+	// cmd := exec.Command("./test/eclogs")
 	stdout, _ := cmd.StdoutPipe()
 	cmd.Start()
 
+	c <- "added " + url
 	content := make([]byte, 5000)
 	for {
 		_, err := stdout.Read(content)
@@ -67,7 +68,13 @@ func combineLogs(c chan string) {
 		var count = 0
 		for _, k := range perc.Keys() {
 			v, _ := perc.Get(k)
-			fmt.Printf("= %v: %v      \n", names[k], v)
+
+            name, ok := names[k]
+			if ok {
+				fmt.Printf("= %v: %v      \n", name, v)
+			} else {
+				fmt.Printf("= %v: %v      \n", k, v)
+			}
 			count += 1
 		}
 		CURSOR_UP_ONE := "\x1b[1A"
