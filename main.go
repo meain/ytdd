@@ -50,6 +50,7 @@ func download(url string, c chan string) {
 	}
 
 	cmd.Wait()
+	c <- "complete " + url
 }
 
 func combineLogs(c chan string) {
