@@ -17,7 +17,7 @@ func formatPercentage(info string, url string) string {
 	if err != nil {
 		log.Fatal(err)
 	}
-	re2, err := regexp.Compile(`\[download\] Destination: ([a-zA-Z0-9-_\.\ ]+)`)
+	re2, err := regexp.Compile(`\[download\] Destination: (.*)`)
 	if err != nil {
 		log.Fatal(err)
 	}
