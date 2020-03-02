@@ -16,13 +16,24 @@ ytdd
 
 ## Install
 
+### Package manager
+
+#### macOS
+
+```
+brew tap meain/homebrew-meain
+brew install meain/homebrew-meain/ytdd
+```
+
+### Manual
+
 Get binary from releases or:
 
 ```
 curl -s "https://raw.githubusercontent.com/meain/ytdd/master/scripts/install" | bash
 ```
 
-## Uninstall
+###### Uninstall (manual)
 
 ```
 rm /usr/local/bin/ytdd
