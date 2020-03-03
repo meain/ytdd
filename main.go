@@ -91,7 +91,7 @@ func bufferUrls(url string, c chan string, guard chan struct{}) {
 }
 
 func main() {
-	maxParallel := 5
+	maxParallel := 10
 	prevClip := ""
 
 	c := make(chan string)
