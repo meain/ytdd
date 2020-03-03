@@ -104,7 +104,7 @@ func main() {
 		if err != nil {
 			log.Fatal(err)
 		}
-		if prevClip != clip && strings.HasPrefix(clip, "https://") {
+		if prevClip != clip && (strings.HasPrefix(clip, "https://www.youtube.com/") || strings.HasPrefix(clip, "https://youtu.be/") || strings.HasPrefix(clip, "https://youtube.com/")) {
 			prevClip = clip
 			go bufferUrls(clip, c, guard)
 		}
