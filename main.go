@@ -53,6 +53,9 @@ func download(url string, c chan string) {
 }
 
 func combineLogs(c chan string) {
+	GREY := "\033[1;30m"  // 0;37 for light grey
+	RESET := "\033[0m"
+
 	ERASE_LINE := "\x1b[2K"
 	CURSOR_UP_ONE := "\x1b[1A"
 	perc := orderedmap.New()
@@ -72,10 +75,15 @@ func combineLogs(c chan string) {
 			v, _ := perc.Get(k)
 
 			name, ok := names[k]
+
+			PREFIX := ""
+			if v == "complete" {
+				PREFIX = GREY
+			}
 			if ok {
-				fmt.Printf("%v= %v: %v\n", ERASE_LINE, name, v)
+				fmt.Printf("%v%v= %v: %v%v\n", PREFIX, ERASE_LINE, name, v, RESET)
 			} else {
-				fmt.Printf("%v= %v: %v\n", ERASE_LINE, k, v)
+				fmt.Printf("%v%v= %v: %v%v\n", PREFIX, ERASE_LINE, k, v, RESET)
 			}
 			count += 1
 		}
