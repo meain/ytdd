@@ -1,8 +1,10 @@
-name: Release
+name: Release Assets
+
 on:
   push:
     tags:
       - '*'
+
 jobs:
   goreleaser:
     runs-on: ubuntu-latest
